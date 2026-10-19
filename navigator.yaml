@@ -9,7 +9,7 @@ project:
 pages:
   - slug: engagement
     kind: engagement_billing_records
-    title: Overview
+    title: Engagement and billing
     draft: drafts/sample_transactional__engagement.md
     lenses:
       lawyer: [engagement_letter, invoice, prebill_review, boundary_note, provenance_statement]
