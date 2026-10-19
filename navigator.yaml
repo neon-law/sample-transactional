@@ -1,0 +1,23 @@
+version: 26.10.19
+project:
+  private_notion_page: not provisioned
+  private_slack_channel: not provisioned
+  client_dri: client@neonlaw.com
+  lawyer_dri: nick@neonlaw.com
+  host: staging.neonlaw.com
+  name: sample-transactional
+pages:
+  - slug: engagement
+    kind: engagement_billing_records
+    title: Overview
+    draft: drafts/sample_transactional__engagement.md
+    lenses:
+      lawyer: [engagement_letter, invoice, prebill_review, boundary_note, provenance_statement]
+      client: [engagement_letter, invoice, boundary_note, provenance_statement]
+  - slug: agreements
+    kind: document_workbench
+    title: Agreements
+    draft: drafts/sample_transactional__engagement.md
+    lenses:
+      lawyer: [document_body, notation_list, notation_document, notation_checklist, boundary_note, provenance_statement]
+      client: [notation_list, notation_document, notation_checklist, boundary_note, provenance_statement]

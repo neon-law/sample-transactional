@@ -1,0 +1,17 @@
+name: cd
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  gate:
+    uses: neon-law/navigator/.github/workflows/project-gate.yml@26.10.19
+  publish:
+    needs: gate
+    uses: neon-law/navigator/.github/workflows/project-publish.yml@26.10.19

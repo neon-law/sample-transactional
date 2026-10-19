@@ -1,0 +1,7 @@
+# Per-machine agent settings.
+.agents/settings.local.json
+.agents/worktrees/
+.DS_Store
+.env
+.env.*
+!.env.example
