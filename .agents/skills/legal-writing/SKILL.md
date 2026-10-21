@@ -125,10 +125,9 @@ filed client document is worse than an error, so do not guess.
 - **Pointer path and revision verification.** The pointer lives at `documents/<slug>.yaml` once written. Confirm a
   revision landed with `navigator site document log documents/<slug>.yaml`. It prints the revision chain, newest first,
   marking the operative row with `*`. That table is the verification step, not the exit code.
-- **Windows login.** `navigator site login --host <host>` opens a browser-loopback flow. Its start URL is
-  percent-encoded, so a literal `&` between query parameters reaches the browser intact. Where the browser will not
-  launch, pass `--no-browser` to print the URL and open it by hand. The token is stored in the platform home directory:
-  `%USERPROFILE%\.navigator.json` on Windows, falling back to `%HOME%`.
+- **Login.** `navigator site login --host <host>` opens a browser-loopback flow. Its start URL is percent-encoded, so a
+  literal `&` between query parameters reaches the browser intact. Where the browser will not launch, pass
+  `--no-browser` to print the URL and open it by hand. The token is stored at `~/.navigator.json`.
 
 ## A court paper reads as delivered to the judge
 

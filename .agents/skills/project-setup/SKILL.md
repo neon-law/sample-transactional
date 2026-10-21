@@ -1,6 +1,6 @@
 ---
 name: project-setup
-description: Open a Project, generate its canonical repository shell, and provision its publisher.
+description: Open a Project, generate its canonical repository shell, and set up its Project surfaces.
 ---
 
 # Set up a Project
@@ -27,7 +27,7 @@ and writes the canonical `navigator.yaml`, `AGENTS.md`, workflows, license, `COD
 CLI release. It initializes Git and runs the generated-project gate. It does not create application or notation-template
 content. Cancel before answering yes to the conflict attestation to leave the Project and destination unwritten.
 
-## Provision the publisher and Project surfaces
+## Set up the Project surfaces
 
 After the Project is open, run:
 
@@ -35,14 +35,9 @@ After the Project is open, run:
 navigator project setup <code>
 ```
 
-The caller needs the Project's assigned lawyer DRI authorization and a saved Navigator login. Navigator's server uses
-its configured service identity to converge the Project's scoped Google Cloud grants and GitHub Actions variables;
-`WIF_PROVIDER` is written last. The CLI reports the publisher as `queued` when the durable workflow accepts it. That
-means provisioning was queued, not that it has completed. Re-running setup converges after partial failures. The same
-command also reconciles Drive, repository, Slack, and Notion surfaces and reports each resource separately.
-
-Before relying on a first main-branch push, verify that the deployment's Workload Identity provider condition admits the
-repository on `main`. Publisher setup does not change a separate provider-owner policy.
+The caller needs the Project's assigned lawyer DRI authorization and a saved Navigator login. The command reconciles the
+Drive, repository, Slack, and Notion surfaces and reports each resource separately. Re-running setup converges after
+partial failures. A Project repository commits only source, so there is no Portal publisher to provision.
 
 For the fleet, a repository adopts this skill and the other synced skills when it updates its gate to a release that
 includes them. The repository gate requires synced skill files to match that release byte-for-byte.

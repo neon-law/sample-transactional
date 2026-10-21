@@ -1,7 +1,10 @@
-# Per-machine agent settings.
+# Call notes and memos for `navigator project communication create --body-file`.
+# The Communication's body lives in Navigator's store, never in Git.
+notes/
+
+# Per-machine agent and operating-system state.
+.claude/settings.local.json
+.claude/worktrees/
 .agents/settings.local.json
 .agents/worktrees/
 .DS_Store
-.env
-.env.*
-!.env.example
