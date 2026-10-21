@@ -77,7 +77,13 @@ Change a recorded date, or close one when it is met or no longer applies. Neithe
 navigator project deadline update <id> --due-at 2026-11-09T17:00:00-08:00
 navigator project deadline complete <id>
 navigator project deadline cancel <id>
+navigator project deadline reopen <id>
 ```
+
+Reopen only when a cancelled date applies again. It restores the same row to open, retaining its id, replay key, and
+stored fields. Reopening an open row is a no-op; a complete row cannot be reopened. Replaying a cancelled row refuses
+without changing it and directs you to reopen first. Reopen it, then update or replay the same key; never create a
+replacement row. Replaying a complete row updates its fields while keeping its complete status.
 
 ## 4. Check the matter page
 
