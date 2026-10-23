@@ -1,3 +1,12 @@
+# Document bytes staged for or pulled down by `navigator project sync`.
+# Each document's pointer is committed under blobs/; its bytes never are.
+/documents/
+
+# Legal files and handoff notes never enter a Project repository.
+*.pdf
+*.docx
+*.local
+
 # Call notes and memos for `navigator project communication create --body-file`.
 # The Communication's body lives in Navigator's store, never in Git.
 notes/

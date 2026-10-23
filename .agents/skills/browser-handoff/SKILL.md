@@ -69,7 +69,7 @@ Use `--description` to record which site the copy came from and when it was down
 confirm the new revision is the operative row, marked `*`:
 
 ```bash
-navigator site document log documents/<name>.pdf.yaml
+navigator site document log blobs/<name>.pdf.yaml
 ```
 
-That table, not the upload's exit code, is the proof the file landed. Commit only the pointer YAML.
+That table, not the upload's exit code, is the proof the file landed. Commit only the pointer YAML under `blobs/`.

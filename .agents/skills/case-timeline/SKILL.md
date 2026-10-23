@@ -40,10 +40,11 @@ A Docket Entry names the document on file for it. File that document before reco
 *source pending* longer than it has to be:
 
 - A court's CM/ECF notice: `navigator project docket ingest <notice.eml>` files the free-look PDF under
-  `documents/docket/<case>/` and records the entry through the same door, one per notice.
-- Our own filing, or a document that arrived another way: `navigator project sync` from the checkout, or
-  `navigator site document upload --kind filing`, then record the entry below and pass the pointer's path under
-  `documents/` as `--slug`.
+  `documents/docket/<case>/`, its pointer under `blobs/docket/<case>/`, and records the entry through the same door, one
+  per notice.
+- Our own filing, or a document that arrived another way: `navigator project sync` from the checkout, or `navigator site
+  document upload --kind filing`, then record the entry below and pass the document's slug (its path under `documents/`)
+  as `--slug`.
 
 An entry with no document is a meaningful state, not an error. Record it, and link the document when it arrives.
 
@@ -136,9 +137,9 @@ navigator project communication create \
   --channel email_outbound --direction outbound --counterparty … --at … --body-file … --confirms <call id>`.
 - **A date agreed on a call is a Deadline.** Record it through the `deadline` skill once the confirming email exists;
   the call note is not the record of the date.
-- **Communications stay server-only.** Nothing is written under `documents/`, `project sync` writes no pointer for one,
-  and a call is never uploaded as a `memo` or `transcript` document. Read the log back with `navigator project
-  communication list --channel call`.
+- **Communications stay server-only.** Nothing is written under `documents/` or `blobs/`, `project sync` writes no
+  pointer for one, and a call is never uploaded as a `memo` or `transcript` document. Read the log back with `navigator
+  project communication list --channel call`.
 
 ## 7. Current position
 
