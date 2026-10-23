@@ -36,7 +36,7 @@ Write a `SHA256SUMS` file beside the originals in the matter's Drive folder so a
 
 ## 3. File the Authority
 
-Stage each original under `documents/` in the folder that names its class, with a sidecar beside it:
+Stage each original under the Git-ignored `documents/`, in the folder that names its class, with a sidecar beside it:
 
 | Class | Folder |
 | -- | -- |
@@ -64,16 +64,16 @@ navigator project sync
 ```
 
 To limit a filing run to one folder, pass `--only documents/cases` or `--only documents/rules` to both commands.
-`project sync` archives the bytes as a global Authority, writes `<file>.yaml` carrying its `authority_id`, removes the
-staging sidecar, and keeps the bytes beside the pointer, ignored by Git. An exact citation with the same archived bytes
-reuses its global Authority; different bytes under that citation require review. Equal bytes alone do not establish
-identity. To correct a field on an Authority already filed, use `navigator site authorities update`. To file one without
-a checkout, use `navigator site authorities create`.
+`project sync` archives the bytes as a global Authority, writes the pointer `blobs/cases/<file>.yaml` or
+`blobs/rules/<file>.yaml` carrying its `authority_id`, removes the staging sidecar, and keeps the bytes in `documents/`,
+ignored by Git. An exact citation with the same archived bytes reuses its global Authority; different bytes under that
+citation require review. Equal bytes alone do not establish identity. To correct a field on an Authority already filed,
+use `navigator site authorities update`. To file one without a checkout, use `navigator site authorities create`.
 
 ## 4. Commit the pointer only
 
 Run `navigator project gate` before pushing; it refuses tracked raw bytes and staging sidecars. Commit only the `.yaml`
-pointer; `documents/.gitignore` keeps the bytes out.
+pointer under `blobs/`; the root `.gitignore` keeps everything under `documents/` out.
 
 A fresh clone gets the bytes back with `navigator project sync`, which verifies each against the pointer's `sha256`.
 
@@ -91,5 +91,6 @@ navigator project docket ingest notices/*.eml --dry-run
 navigator project docket ingest notices/*.eml
 ```
 
-The verb downloads each document once, files it under `documents/docket/<case>/`, and records the Service List as
-Persons and Relationship Log rows for conflicts. It never adds those people to the Project.
+The verb downloads each document once, files it under `documents/docket/<case>/` with its pointer under
+`blobs/docket/<case>/`, and records the Service List as Persons and Relationship Log rows for conflicts. It never adds
+those people to the Project.

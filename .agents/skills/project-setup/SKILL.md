@@ -42,6 +42,26 @@ partial failures. A Project repository commits only source, so there is no Porta
 For the fleet, a repository adopts this skill and the other synced skills when it updates its gate to a release that
 includes them. The repository gate requires synced skill files to match that release byte-for-byte.
 
+## Matter folders
+
+`navigator project sync` gives every Project checkout the same Git-ignored `documents/` tree, even when a folder is
+empty:
+
+| Folder | Holds | Default for `kind` |
+| --- | --- | --- |
+| `Client Production/` | What the client supplied | `exhibit` |
+| `Correspondence (Served)/` | Letters served or received | `letter` |
+| `Discovery/` | Discovery requests and responses | none: set `folder: Discovery` |
+| `Docket Filings/` | Court paper and docket ingest | `pleading`, `filing` |
+| `Work Product/` | Memos, transcripts, drafts | every other kind |
+
+Git tracks only the pointers under `blobs/`. To file a document, drop it into its matter folder and run `navigator
+project sync`, or run `navigator site document upload --folder "<Folder>"`. `onboarding/`, `offboarding/`, `invoices/`,
+`cases/`, and `rules/` stay beside the matter folders.
+
+A checkout from before the matter folders moves on the next `navigator project sync`, or with `navigator project
+repository migrate-documents`. The move leaves each pointer's checksum and asset id unchanged.
+
 ## Verify
 
 Run the read-only Project checks from the repository root:

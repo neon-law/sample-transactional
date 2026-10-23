@@ -94,10 +94,10 @@ filed client document is worse than an error, so do not guess.
   not guess an organization.
 - **Direct upload versus staged sync.** `navigator site document upload --project <code> --file <path> --kind <kind>`
   files one document immediately through the API; use it for a single filing during a session. `navigator project sync`
-  is the batch path: it uploads files staged under a checkout's `documents/` folder, which is never committed
-  (`documents/.gitignore` enforces that).
+  is the batch path: it uploads files staged under a checkout's `documents/` folder, which the root `.gitignore` keeps
+  out of Git, and writes each document's pointer under `blobs/`.
 - **Direct upload records a source pointer in its Project checkout.** When `navigator site document upload` runs from
-  the matching Project repository, it writes only `documents/<slug>.yaml` and also prints the pointer YAML. The legal
+  the matching Project repository, it writes only `blobs/<slug>.yaml` and also prints the pointer YAML. The legal
   document bytes stay in Navigator storage. Review and commit the pointer; run `navigator project gate --check` to
   reconcile every live row this login can see, or `navigator project sync` to catch up the whole matter.
 - **Outside the matching checkout**, direct upload prints the pointer YAML without writing a file. Run it from the
@@ -105,10 +105,10 @@ filed client document is worse than an error, so do not guess.
 - **Filename.** No convention is enforced on `--file`. Use a stable name a lawyer would recognize on sight (the caption
   or subject, compressed), since `--slug` defaults to it.
 - **Kind.** One of `letter`, `filing`, `will`, `trust`, `directive`, `agreement`, `pleading`, `onboarding`,
-  `offboarding`, `memo`, `transcript`, `inbound_contract`, `certificate_of_naturalization`, `exhibit`,
+  `offboarding`, `memo`, `transcript`, `inbound_contract`, `certificate_of_naturalization`, `exhibit`, `order`,
   `closed_repository`, `invoice`, `unclassified` (`navigator site document upload --help` prints the same list).
   `filing` is a document filed with a government body; `pleading` is a court paper (a complaint, motion, or brief) filed
-  with a court. A scanned motion is `filing` only before it is filed with the court.
+  with a court. A scanned motion is `filing` only before it is filed with the court. A court's own order is `order`.
 - **Visibility.** `--visibility internal` (default) or `--visibility client`, the client-visible lane.
 - **Metadata.** `document upload` has no `--metadata` flag. The committed pointer carries only `kind`, `visibility`,
   and the current revision's `version`, `asset_id`, `created_at`, `sha256`, and `size_bytes`. `--description` lands on
@@ -122,9 +122,9 @@ filed client document is worse than an error, so do not guess.
   represented as a repository pointer
   ```
 
-- **Pointer path and revision verification.** The pointer lives at `documents/<slug>.yaml` once written. Confirm a
-  revision landed with `navigator site document log documents/<slug>.yaml`. It prints the revision chain, newest first,
-  marking the operative row with `*`. That table is the verification step, not the exit code.
+- **Pointer path and revision verification.** The pointer lives at `blobs/<slug>.yaml` once written. Confirm a revision
+  landed with `navigator site document log blobs/<slug>.yaml`. It prints the revision chain, newest first, marking the
+  operative row with `*`. That table is the verification step, not the exit code.
 - **Login.** `navigator site login --host <host>` opens a browser-loopback flow. Its start URL is percent-encoded, so a
   literal `&` between query parameters reaches the browser intact. Where the browser will not launch, pass
   `--no-browser` to print the URL and open it by hand. The token is stored at `~/.navigator.json`.
