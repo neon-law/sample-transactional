@@ -11,6 +11,9 @@
 # The Communication's body lives in Navigator's store, never in Git.
 notes/
 
+# Email bodies, drafts, and saved copies of sent mail. Matter facts, never Git.
+mail/
+
 # Per-machine agent and operating-system state.
 .claude/settings.local.json
 .claude/worktrees/
