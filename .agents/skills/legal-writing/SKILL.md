@@ -96,12 +96,12 @@ filed client document is worse than an error, so do not guess.
   files one document immediately through the API; use it for a single filing during a session. `navigator project sync`
   is the batch path: it uploads files staged under a checkout's `documents/` folder, which the root `.gitignore` keeps
   out of Git, and writes each document's pointer under `blobs/`.
-- **Direct upload records a source pointer in its Project checkout.** When `navigator site document upload` runs from
-  the matching Project repository, it writes only `blobs/<slug>.yaml` and also prints the pointer YAML. The legal
-  document bytes stay in Navigator storage. Review and commit the pointer; run `navigator project gate --check` to
-  reconcile every live row this login can see, or `navigator project sync` to catch up the whole matter.
-- **Outside the matching checkout**, direct upload prints the pointer YAML without writing a file. Run it from the
-  Project repository when you want the source pointer staged there.
+- **Direct upload records a Pointer in its Project checkout.** When `navigator site document upload` runs from
+  the matching Project repository, it writes only `blobs/<slug>.yaml` and also prints the Pointer. The legal document
+  bytes stay in Navigator storage. Review and commit the pointer; run `navigator project gate --check` to reconcile
+  every live row this login can see, or `navigator project sync` to catch up the whole matter.
+- **Outside the matching checkout**, direct upload prints the Pointer without writing a file. Run it from the
+  Project repository when you want the Pointer staged there.
 - **Filename.** No convention is enforced on `--file`. Use a stable name a lawyer would recognize on sight (the caption
   or subject, compressed), since `--slug` defaults to it.
 - **Kind.** One of `letter`, `filing`, `will`, `trust`, `directive`, `agreement`, `pleading`, `onboarding`,
@@ -119,7 +119,7 @@ filed client document is worse than an error, so do not guess.
 
   ```text
   document slug `motion` must carry the source extension from `motion.pdf`; use `motion.pdf` so it can be
-  represented as a repository pointer
+  represented as a Pointer
   ```
 
 - **Pointer path and revision verification.** The pointer lives at `blobs/<slug>.yaml` once written. Confirm a revision
@@ -154,6 +154,28 @@ Write for this judge, this record, and this hearing. Before filing, the draft st
   to argue.
 - **The record that has to exist.** Name the declaration, exhibit, or transcript page the argument stands on before
   the hearing. An argument rests on the record actually filed, not the record the draft assumes.
+
+## Correspondence is terse
+
+We are the experts, so we say less. Applies to email and letters to opposing counsel, vendors, and the court clerk.
+
+- State the fact or the ask. Cite the rule by number; do not explain it.
+- No argument, history, reasoning, or strategy to the other side.
+- Confirm a call topic by topic: a bold one- or two-word heading, then a short paragraph. Prefer that to numbered lists.
+- End with one ask and a deadline.
+- Tell a vendor what to do; do not ask its view.
+- Short is not vague. A notice carries what the rule requires. An ex parte notice states the relief, date, time, place,
+  and whether the other side will oppose.
+
+Example, a call confirmation:
+
+> **Service.** We accept service of the amended complaint by email at the address on the docket. No further service is
+> needed.
+>
+> **Schedule.** Initial disclosures are due November 6. We propose a 21-day extension for written discovery responses.
+>
+> **Ex parte notice.** We will apply ex parte on November 9 at 9:00 a.m. in Department 12 to continue the hearing.
+> Please tell us by Friday at noon whether you will oppose. We will stipulate in writing if you agree by that time.
 
 ## Research order
 
