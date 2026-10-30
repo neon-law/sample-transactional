@@ -9,4 +9,4 @@ permissions:
 
 jobs:
   ci:
-    uses: neon-law/navigator/.github/workflows/project-gate.yml@26.10.29
+    uses: neon-law/navigator/.github/workflows/project-gate.yml@26.10.30
