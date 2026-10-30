@@ -1,4 +1,4 @@
-version: 26.10.29
+version: 26.10.30
 project:
   private_notion_page: not provisioned
   private_slack_channel: not provisioned
