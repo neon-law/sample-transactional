@@ -94,6 +94,13 @@ each answer terse.
   `blobs/pleadings/motion.pdf.yaml`. A file dropped into a matter folder is uploaded on the next sync with that folder's
   kind, and a lawyer-made subfolder inside one is part of the slug. Never commit anything under `documents/`. Run
   `navigator project repository migrate-folders` to reconcile `Discovery/` with `Discovery (Served)/`.
+* Every document's filename follows the `YYYY.MM.DD_name.ext` convention (rule `C004`): a dotted calendar date, one
+  underscore, and a lowercase hyphenated name — `2026.10.12_complaint-annulment.pdf`. Name a file this way when you
+  stage or create one; an upload without an explicit `--slug` proposes the convention, dated by the `matter:` block's
+  `filed_on` (a date the file's own name already carries wins). The gate refuses any other name, except the shipped
+  docket-ingest names under `Docket Filings/`, the `INV-<digits>` invoices, an Authority sidecar, the `_signed` suffix
+  on a signed copy, Markdown work product (a memo or draft is editable source, not a filed document), and a file inside
+  a date-named folder such as `exhibits/2026-09-05/` — the folder already dates it.
 * `drafts/` holds Drafts, the notation blueprints, directly under it; `templates/` is an alias the gate warns about.
   Memo notations use `kind: memo`. Use placeholders for client data and matter facts; answers and work product stay in
   Navigator. A Notation is a database record, never a file here.
@@ -141,10 +148,10 @@ substitute browser or native-app automation for a server that is available.
 * **Slack** — private channel for updates.
 * **Linear** — CLI feedback, named by mechanism and never by matter. Remove personal and matter identifiers before
   filing: write `<client>`, `<claim number>`, `<email>`, `<phone>`, `<address>`, `<identifier>` in their place, and
-  never quote matter text. Run `navigator project feedback-check --project <Project code>` on the draft (repeat
-  `--project` for each matter in it, plus `--term` for a private name the store does not know); it resolves each
-  Project's code and participants' names, mailboxes, and phones from the store, runs locally, and refuses a draft that
-  still carries one. Show the checked text to the lawyer before filing.
+  never quote matter text. Run `navigator project feedback-check --all-projects` on the draft title and body; add
+  `--term` for private names the store does not know. The check resolves all Projects visible through your firm-side
+  participation and their attached Person and Entity identifiers through the site API with your `site login` session.
+  The draft stays local. A failed read or finding blocks filing. Show the checked text to the lawyer before filing.
 * **CourtListener** — dockets, filings, parties, and judges.
 * **Midpage** — statutes and rules.
 * **Descrybe** — case law.
@@ -154,11 +161,16 @@ The last four leave the firm. Keep client identities and matter facts out of tho
 
 For a client email:
 
-* Run `navigator mail draft --body-file` to create an unsent draft of the substantive message body.
-* Add nothing else: do not add a complimentary close, typed name, title, bar admission, contact block, or signature.
-* The attorney reviews the complete draft in Gmail before any separate sending action.
-* The CLI strips the `--` signature delimiter and an exact trailing `NAVIGATOR_GMAIL_SIGNATURE`, but not other prose, so
-  inspect the draft.
+* Run `navigator mail draft --body-file` to create an unsent draft of the substantive message body. Do not paste a
+  signature from another message: the CLI adds the attorney's stored signature — the deployment's row for the sending
+  Gmail account when reachable, else the `NAVIGATOR_GMAIL_SIGNATURE` fallback it announces — including its
+  confidentiality notice, exactly once. Missing configuration in both sources is an error; do not invent signature text.
+* If the CLI reports an embedded signature, stop for attorney review. Preserve quoted history rather than stripping it
+  to force the draft through.
+* The attorney reviews the complete draft in Gmail, confirms one signature and sends it personally. Do not insert
+  another signature during review.
+* A `--draft-id` update replaces the complete draft. Supply every recipient, the thread and every attachment that must
+  remain; signature handling preserves those supplied headers and attachment bytes.
 * To file a received message into the matter's Communication log, run `navigator mail parse <gmail-web-url>` (the URL
   copied from the browser), `navigator mail parse <message.eml>`, or `navigator mail parse <document.pdf>` — the last
   uploads through the document lane. Filing is a record write only; it never sends or archives in Gmail.
