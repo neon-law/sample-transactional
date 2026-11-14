@@ -79,9 +79,9 @@ Product)/` (`transcript`), `Correspondence (Work Product)/` (letters drafted, no
 (Work Product)/` (`memo`), and `Stipulations (Work Product)/`.
 
 Git tracks only the pointers under `blobs/`. To file a document, drop it into its matter folder and run `navigator
-project sync`, or run `navigator site document upload --folder "<Folder>"`. A `Work Product` subfolder's name is its
-whole path below `documents/`, such as `"Work Product/Research (Work Product)"`. `onboarding/`, `offboarding/`,
-`invoices/`, `cases/`, and `rules/` stay beside the matter folders.
+project sync`, or run `hudson site document upload --folder "<Folder>"`. A `Work Product` subfolder's name is its whole
+path below `documents/`, such as `"Work Product/Research (Work Product)"`. `onboarding/`, `offboarding/`, `invoices/`,
+`cases/`, and `rules/` stay beside the matter folders.
 
 A checkout without the matter folders moves into them on the next `navigator project sync`, or with `navigator project
 repository migrate-documents`. One holding a bare `Discovery/` folder refiles with `navigator project repository
@@ -99,3 +99,6 @@ navigator project gate
 `doctor` checks the local machine and Project coordinates. `gate` validates repository structure and generated files.
 The Project code is immutable. Correct a mistaken code through the lifecycle and data-governance process. Do not rename
 the repository or manifest independently.
+
+Follow the **People and Entities in matter work** section of the Project's root `AGENTS.md` when matter work identifies
+a new Person or Entity.

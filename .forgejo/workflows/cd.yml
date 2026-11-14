@@ -134,7 +134,6 @@ jobs:
     if: always()
     runs-on: self-hosted
     enable-openid-connect: true
-    continue-on-error: true
     steps:
       - name: check out main
         env:
@@ -188,6 +187,7 @@ jobs:
           chmod 0755 navigator
           echo "${bin}" >> "${GITHUB_PATH}"
       - name: notify the Project channel of this push
+        continue-on-error: true
         env:
           GATE: ${{ (needs.documents.result == 'success' && needs.seeds.result == 'success') && 'pass' || 'fail' }}
         run: navigator project notify-main-push --ci --gate "${GATE}"
