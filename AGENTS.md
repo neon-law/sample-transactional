@@ -5,6 +5,15 @@
 **Every email must remain a draft. An agent never sends, replies to, or forwards email.** The lawyer reviews each draft
 and sends it personally. A request to send, reply, or forward means prepare a draft for lawyer review instead.
 
+## Signature requests
+
+* Prepare a DocuSign signature request with `navigator notation envelope prepare <notation-id>`.
+* Use the sender view to review the signing fields with the lawyer.
+* Send only after the lawyer explicitly approves the document, recipients, and signing fields. Run
+  `navigator notation envelope send <notation-id>`.
+* Verify the envelope ID and status with `navigator notation envelope status <notation-id>`.
+* To have DocuSign email the client an engagement letter, start with `navigator project onboard --delivery emailed`.
+
 This repository is the source of one Navigator Project, named in `navigator.yaml`. Git is its history: every change to
 the matter's pages, Drafts, and document pointers is a reviewed commit. Declare the change in YAML or Markdown; do not
 write application code. When a declaration cannot say what the matter needs, open a Linear issue for a new Section or
@@ -98,9 +107,10 @@ the gap in the private matter handoff.
   * `Work Product/` holds drafts, research, and every other kind. Its seven fixed subfolders each carry the suffix so
     they read unambiguously out of context and never collide with a served twin: `Client Calls (Work Product)/` (call
     notes and transcripts, `kind: transcript`), `Correspondence (Work Product)/` (letters the firm drafted but did not
-    serve), `Discovery (Work Product)/` (discovery in preparation), `Motions (Work Product)/` (one folder per motion),
-    `Pleadings (Work Product)/` (pleadings in draft), `Research (Work Product)/` (memos, `kind: memo`), and
-    `Stipulations (Work Product)/`.
+    serve), `Discovery (Work Product)/` (discovery in preparation, with `Evidence Summaries/`), `Motions (Work
+    Product)/` (one folder per motion, `kind: motion`), `Pleadings (Work Product)/` (pleadings in draft, with
+    `Answer/`), `Research (Work Product)/` (memos, `kind: memo`), and `Stipulations (Work Product)/` (`kind:
+    stipulation`).
   * `onboarding/`, `offboarding/`, `invoices/`, `cases/`, and `rules/` keep their bytes at the pointer's own path.
 
   The slug is the path below the matter folder: `documents/Docket Filings/pleadings/motion.pdf` for
@@ -119,9 +129,9 @@ the gap in the private matter handoff.
   Navigator. A Notation is a database record, never a file here.
 * `seeds/` holds seed data that `navigator site import` creates or updates.
 * `notes/` is git-ignored. Write call notes there for `navigator project communication create --body-file`.
-* `mail/` is git-ignored. Saved mail lives there: `hudson mail save <message-url>` writes a message's
-  `YYYY.MM.DD_<subject>.eml` copy, and email bodies kept on disk for `hudson mail draft --body-file` belong there too.
-  Saved mail is a matter fact, never Git; the gate refuses anything under `mail/`.
+* `mail/` is git-ignored. Saved mail lives there: `navigator mail save <message-url>` writes a message's
+  `YYYY.MM.DD_<subject>.eml` copy, and email bodies kept on disk for `navigator mail draft --body-file` belong there
+  too. Saved mail is a matter fact, never Git; the gate refuses anything under `mail/`.
 * Handoff note: work that may outlast the session keeps its state in `notes/HANDOFF-<topic>.md.local`. The gate does
   not read it, and no matter fact leaves the repository. Follow `.agents/skills/working-notes/SKILL.md`.
   * Write it before a session ends with work in flight, near compaction, or when the lawyer asks. Rewrite it when the
@@ -149,13 +159,13 @@ Every document this repository produces for a client, a court, a counterparty, o
 Use available MCP servers and the `navigator` CLI, preferring them whenever they provide the needed operation. Never
 substitute browser or native-app automation for a server that is available.
 
-* **Navigator CLI** — the system of record.
-  Document bytes, archived authorities, and answers go through Navigator and never into Git. Preview a memo with `hudson
-  notation preview drafts/<code>.md`. A direct upload from this checkout writes only its pointer under `blobs/`; review
-  and commit that `.yaml` file.
+* **Navigator CLI** — the system of record. Document bytes, archived authorities, and answers go through Navigator and
+  never into Git. Preview a memo with `navigator notation preview drafts/<code>.md`. A direct upload from this checkout
+  writes only its pointer under `blobs/`; review and commit that `.yaml` file.
 * **Notion** — writing: handbooks, guides, and intake notes.
-* **Gmail** — client instructions and correspondence. Read messages and create drafts only; never send, reply to, or
-  forward an email.
+* **Gmail** — review received mail and draft outgoing mail. Before an authorized archive, review the exact thread,
+  file it or save a source-linked review in the approved matter record, and verify the save. If filing is blocked, leave
+  the thread in the inbox.
 * **Google Calendar** — meetings and deadlines.
 * **Google Drive** — meeting notes, transcripts, and large document intake.
 * **Slack** — private channel for updates.
@@ -174,21 +184,21 @@ The last four leave the firm. Keep client identities and matter facts out of tho
 
 For a client email:
 
-* Run `hudson mail draft --body-file` to create an unsent draft of the substantive message body. Do not paste
-  a signature from another message: the CLI adds the attorney's stored signature — the deployment's row for the sending
-  Gmail account when reachable, else the `NAVIGATOR_GMAIL_SIGNATURE` fallback it announces, else the Gmail account's
-  default signature — including its confidentiality notice, exactly once. End the body without a sign-off line; the
-  signature is the close. Do not invent signature text.
+* Run `navigator mail draft --body-file` to create an unsent draft of the substantive message body. Do not paste
+  a signature from another message: the CLI adds the attorney's stored signature — the authenticated site's row for the
+  sending Gmail account when reachable, else the `NAVIGATOR_GMAIL_SIGNATURE` fallback it announces, else the Gmail
+  account's default signature — including its confidentiality notice, exactly once. End the body without a sign-off
+  line; the signature is the close. Do not invent signature text.
 * If the CLI reports an embedded signature, stop for attorney review. Preserve quoted history rather than stripping it
   to force the draft through.
 * The attorney reviews the complete draft in Gmail, confirms one signature and sends it personally. Do not insert
   another signature during review.
 * A `--draft-id` update replaces the complete draft. Supply every recipient, the thread and every attachment that must
   remain; signature handling preserves those supplied headers and attachment bytes.
-* To file a received message into the matter's Communication log, run `hudson mail parse <gmail-web-url>` (the
-  URL copied from the browser), `hudson mail parse <message.eml>`, or `hudson mail parse <document.pdf>` — the last
-  uploads through the document lane. Filing is a record write only; it never sends or archives in Gmail.
-* To keep a Gmail message's .eml copy in this checkout, run `hudson mail save <gmail-web-url>`; it writes
+* To file a received message into the matter's Communication log, run `navigator mail parse <gmail-web-url>` (the
+  URL copied from the browser), `navigator mail parse <message.eml>`, or `navigator mail parse <document.pdf>` — the
+  last uploads through the document lane. Filing is a record write only; it never sends or archives in Gmail.
+* To keep a Gmail message's .eml copy in this checkout, run `navigator mail save <gmail-web-url>`; it writes
   `mail/YYYY.MM.DD_<subject>.eml` and refuses a filename that drops the send-date prefix.
 
 ## Feedback
