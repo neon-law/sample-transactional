@@ -21,10 +21,10 @@ verb stages the checkout's changes, signs the commit, opens a ready review reque
 merge, and watches the exact merge commit's deployment run. Reuse the branch after a recoverable stall.
 
 The origin selects the forge. For Forgejo, configure `NAVIGATOR_FORGEJO_ROOT_URL` and `FORGEJO_TOKEN` on the trusted
-host. The token must stay outside Project workflows. Forgejo scheduling is acknowledged by its API; only observing the
-actual merge proves completion. The generated Forgejo workflow currently gates pull requests only, and seed writes
-through Forgejo CI remain unavailable. Report its missing post-merge run as unverified; keep source handover pending.
+host; the token stays outside Project workflows. Forgejo's API acknowledges scheduling; only observing the actual merge
+proves completion. The generated Forgejo workflow gates pull requests only, and seed writes through Forgejo CI are
+unavailable. Report its missing post-merge run as unverified; keep source handover pending.
 
 Read the report's review URL, merge commit, deployment URL, conclusion, and job results. A failed or missing deployment
-is unresolved work even after merge. Portal publishing is retired; a successful `publish` no-op proves no application.
-Report any unverified stage explicitly. Do not change source authority or remove the other forge as part of this verb.
+is unresolved work even after merge. The deployment run proves application; a `publish` no-op does not. Report any
+unverified stage explicitly. Do not change source authority or remove the other forge as part of this verb.

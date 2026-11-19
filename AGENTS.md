@@ -5,10 +5,26 @@
 **Every email must remain a draft. An agent never sends, replies to, or forwards email.** The lawyer reviews each draft
 and sends it personally. A request to send, reply, or forward means prepare a draft for lawyer review instead.
 
+## Signature requests
+
+* Prepare a DocuSign signature request with `navigator notation envelope prepare <notation-id>`.
+* Use the sender view to review the signing fields with the lawyer.
+* Send only after the lawyer explicitly approves the document, recipients, and signing fields. Run
+  `navigator notation envelope send <notation-id>`.
+* Verify the envelope ID and status with `navigator notation envelope status <notation-id>`.
+* To have DocuSign email the client an engagement letter, start with `navigator project onboard --delivery emailed`.
+
 This repository is the source of one Navigator Project, named in `navigator.yaml`. Git is its history: every change to
 the matter's pages, Drafts, and document pointers is a reviewed commit. Declare the change in YAML or Markdown; do not
 write application code. When a declaration cannot say what the matter needs, open a Linear issue for a new Section or
 gate rule rather than working around it.
+
+## The Firm
+
+Name the Firm by its role: "the Firm". Do not spell a Firm's legal name in this file, in a skill, in `README.md`, or in
+a Draft. Where a letter must print that name — the letterhead, the From line, or the signature block — write
+`{{firm.legal_name}}`. Navigator fills it from the Firm behind the Brand declared as `project.brand`. A sentence that
+states a fact about a named entity, such as a conversion, a shareholding, or a services agreement, keeps that name.
 
 ## Find the term first
 
@@ -20,7 +36,7 @@ none fits, add a term under `docs/glossary/` in the same Navigator change rather
 
 1. `navigator project sync` downloads the Project documents visible to you.
 2. Edit `navigator.yaml`, `drafts/`, or `blobs/` pointers.
-3. `navigator project preview` renders the Matter Pages from the working tree.
+3. `hudson preview` renders the Matter Pages from the working tree.
 4. `navigator project gate` before every commit; it is the required check.
 5. Open a pull request. Merging it publishes.
 
@@ -32,6 +48,17 @@ each answer terse.
 `navigator project onboard` and `navigator project offboard` draft or open the engagement and offboarding letters from
 `navigator.yaml`. `navigator project repository sync-skills` restores missing or drifted canonical Agent Skills and this
 `AGENTS.md`; keep custom skills beside them.
+
+## People and Entities in matter work
+
+When a message, Docket Entry, order, or Notation Answer identifies a Person or Entity that Navigator does not already
+record, ask the lawyer whether to record them and whether the record belongs to the Project, the lawyer, or the Firm.
+Ask when the name surfaces, including for opposing counsel, witnesses, guardians, and related parties.
+
+For approved Project records, use `navigator project reference add` for a verified party and `navigator project adverse
+add` when the lawyer confirms adversity. Record the lawyer's decision and authorship. If the approved scope has no
+available CLI path, or a Person cannot be recorded because required information is missing, tell the lawyer and record
+the gap in the private matter handoff.
 
 ## Branches
 
@@ -45,14 +72,9 @@ each answer terse.
   the client is meant to read that document. Treat every change to `visibility: client` as a deliberate client-release
   decision. Review every change to a `client:` lens under `pages:`; it is what the client sees. For each Deadline,
   choose deliberately whether it is internal or client-visible.
-* "Pull changes" means rebase the current branch onto the latest `origin/main`; never `git pull` into a PR branch,
-  merge `origin/main`, or only fetch. Start from a clean tree (commit work in progress; never stash), then `git fetch
-  origin && git rebase origin/main` (on `main` itself, `git pull --rebase origin main`). Resolve conflicts, `git add`,
-  `git rebase --continue`; if they cannot be resolved cleanly, `git rebase --abort` and report what conflicted. Commits
-  already squash-merged into `main` drop out of the rebase; where they conflict, keep `origin/main`'s version. Run
-  `navigator project gate`, then push with `git push --force-with-lease`, never plain `--force`, and never force-push
-  `main`. A host-side "sync with base branch" tool merges rather than rebases; use it only when the sandbox blocks a
-  rebase, and say so. The steps live in `.agents/skills/pull-changes/SKILL.md`.
+* "Pull changes" means rebase onto refreshed `origin/main` from a clean tree. Commit work in progress; never stash,
+  merge `origin/main`, or force-push `main`. Follow `.agents/skills/pull-changes/SKILL.md` for conflict handling,
+  validation, and `--force-with-lease`. A host-side sync tool is allowed only when the sandbox blocks rebase; report it.
 * "Push changes", "push this", "ship it", and "land it" mean signed-rebase onto the latest `origin/main`, gate, sign,
   push a topic branch, open a ready PR against `main`, and follow its checks and auto-merge through merge. The job ends
   when the pull request is merged and this checkout is current. Follow `.agents/skills/push-changes/SKILL.md`.
@@ -74,25 +96,34 @@ each answer terse.
     `kind`.
 * `documents/` is git-ignored. It holds the bytes `navigator project sync` pulls down or uploads, organised the way a
   case-management system organises a matter. `navigator project sync` creates every folder, even when it is empty:
-  * `Client Production/` holds what the client supplied, such as exhibits (`kind: exhibit`).
+  * `Client Production/` holds what the client supplied, such as exhibits (`kind: exhibit`). Its two fixed subfolders
+    nest below it: `Agreements/` and `Screenshots/` — a pointer's `folder:` names them, or `navigator project
+    migrate-folders` files a pointer there; no `kind` defaults to either.
   * `Correspondence (Served)/` holds letters served or received (`kind: letter`).
   * `Discovery (Served)/` holds discovery actually served or received.
   * `Docket Filings/` holds court paper: pleadings, filings, and docket ingest (`kind: pleading`, `filing`).
   * `Court Rules/` holds the court's local rules and standing orders.
   * `Engagement/` holds the letters that open and close the engagement (`kind: onboarding`).
   * `Work Product/` holds drafts, research, and every other kind. Its seven fixed subfolders each carry the suffix so
-    they read unambiguously out of context and never collide with a served twin (LAW-215): `Client Calls (Work
-    Product)/` (call notes and transcripts, `kind: transcript`), `Correspondence (Work Product)/` (letters the firm
-    drafted but did not serve), `Discovery (Work Product)/` (discovery in preparation), `Motions (Work Product)/` (one
-    folder per motion), `Pleadings (Work Product)/` (pleadings in draft), `Research (Work Product)/` (memos, `kind:
-    memo`), and `Stipulations (Work Product)/`.
+    they read unambiguously out of context and never collide with a served twin: `Client Calls (Work Product)/` (call
+    notes and transcripts, `kind: transcript`), `Correspondence (Work Product)/` (letters the firm drafted but did not
+    serve), `Discovery (Work Product)/` (discovery in preparation, with `Evidence Summaries/`), `Motions (Work
+    Product)/` (one folder per motion, `kind: motion`), `Pleadings (Work Product)/` (pleadings in draft, with
+    `Answer/`), `Research (Work Product)/` (memos, `kind: memo`), and `Stipulations (Work Product)/` (`kind:
+    stipulation`).
   * `onboarding/`, `offboarding/`, `invoices/`, `cases/`, and `rules/` keep their bytes at the pointer's own path.
 
   The slug is the path below the matter folder: `documents/Docket Filings/pleadings/motion.pdf` for
   `blobs/pleadings/motion.pdf.yaml`. A file dropped into a matter folder is uploaded on the next sync with that folder's
-  kind, and a lawyer-made subfolder inside one is part of the slug. Never commit anything under `documents/`. A checkout
-  from before LAW-215 holds a bare `Discovery/` folder instead of `Discovery (Served)/`; `navigator project repository
-  migrate-folders` refiles it.
+  kind, and a lawyer-made subfolder inside one is part of the slug. Never commit anything under `documents/`. Run
+  `navigator project repository migrate-folders` to reconcile `Discovery/` with `Discovery (Served)/`.
+* Every document's filename follows the `YYYY.MM.DD_name.ext` convention (rule `C004`): a dotted calendar date, one
+  underscore, and a lowercase hyphenated name — `2026.10.12_complaint-annulment.pdf`. Name a file this way when you
+  stage or create one; an upload without an explicit `--slug` proposes the convention, dated by the `matter:` block's
+  `filed_on` (a date the file's own name already carries wins). The gate refuses any other name, except the shipped
+  docket-ingest names under `Docket Filings/`, the `INV-<digits>` invoices, an Authority sidecar, the `_signed` suffix
+  on a signed copy, Markdown work product (a memo or draft is editable source, not a filed document), and a file inside
+  a date-named folder such as `exhibits/2026-09-05/` — the folder already dates it.
 * `drafts/` holds Drafts, the notation blueprints, directly under it; `templates/` is an alias the gate warns about.
   Memo notations use `kind: memo`. Use placeholders for client data and matter facts; answers and work product stay in
   Navigator. A Notation is a database record, never a file here.
@@ -128,22 +159,22 @@ Every document this repository produces for a client, a court, a counterparty, o
 Use available MCP servers and the `navigator` CLI, preferring them whenever they provide the needed operation. Never
 substitute browser or native-app automation for a server that is available.
 
-* **Navigator CLI** — the system of record.
-  Document bytes, archived authorities, and answers go through Navigator and never into Git. Preview a memo with
-  `navigator notation preview drafts/<code>.md`. A direct upload from this checkout writes only its pointer under
-  `blobs/`; review and commit that `.yaml` file.
+* **Navigator CLI** — the system of record. Document bytes, archived authorities, and answers go through Navigator and
+  never into Git. Preview a memo with `navigator notation preview drafts/<code>.md`. A direct upload from this checkout
+  writes only its pointer under `blobs/`; review and commit that `.yaml` file.
 * **Notion** — writing: handbooks, guides, and intake notes.
-* **Gmail** — client instructions and correspondence. Read messages and create drafts only; never send, reply to, or
-  forward an email.
+* **Gmail** — review received mail and draft outgoing mail. Before an authorized archive, review the exact thread,
+  file it or save a source-linked review in the approved matter record, and verify the save. If filing is blocked, leave
+  the thread in the inbox.
 * **Google Calendar** — meetings and deadlines.
 * **Google Drive** — meeting notes, transcripts, and large document intake.
 * **Slack** — private channel for updates.
 * **Linear** — CLI feedback, named by mechanism and never by matter. Remove personal and matter identifiers before
   filing: write `<client>`, `<claim number>`, `<email>`, `<phone>`, `<address>`, `<identifier>` in their place, and
-  never quote matter text. Run `navigator project feedback-check --project <Project code>` on the draft (repeat
-  `--project` for each matter in it, plus `--term` for a private name the store does not know); it resolves each
-  Project's code and participants' names, mailboxes, and phones from the store, runs locally, and refuses a draft that
-  still carries one. Show the checked text to the lawyer before filing.
+  never quote matter text. Run `navigator project feedback-check --all-projects` on the draft title and body; add
+  `--term` for private names the store does not know. The check resolves all Projects visible through your firm-side
+  participation and their attached Person and Entity identifiers through the site API with your `site login` session.
+  The draft stays local. A failed read or finding blocks filing. Show the checked text to the lawyer before filing.
 * **CourtListener** — dockets, filings, parties, and judges.
 * **Midpage** — statutes and rules.
 * **Descrybe** — case law.
@@ -153,14 +184,20 @@ The last four leave the firm. Keep client identities and matter facts out of tho
 
 For a client email:
 
-* Run `navigator mail draft --body-file` to create an unsent draft of the substantive message body.
-* Add nothing else: do not add a complimentary close, typed name, title, bar admission, contact block, or signature.
-* The attorney reviews the complete draft in Gmail before any separate sending action.
-* The CLI strips the `--` signature delimiter and an exact trailing `NAVIGATOR_GMAIL_SIGNATURE`, but not other prose, so
-  inspect the draft.
-* To file a received message into the matter's Communication log, run `navigator mail parse <gmail-web-url>` (the URL
-  copied from the browser), `navigator mail parse <message.eml>`, or `navigator mail parse <document.pdf>` — the last
-  uploads through the document lane. Filing is a record write only; it never sends or archives in Gmail.
+* Run `navigator mail draft --body-file` to create an unsent draft of the substantive message body. Do not paste
+  a signature from another message: the CLI adds the attorney's stored signature — the authenticated site's row for the
+  sending Gmail account when reachable, else the `NAVIGATOR_GMAIL_SIGNATURE` fallback it announces, else the Gmail
+  account's default signature — including its confidentiality notice, exactly once. End the body without a sign-off
+  line; the signature is the close. Do not invent signature text.
+* If the CLI reports an embedded signature, stop for attorney review. Preserve quoted history rather than stripping it
+  to force the draft through.
+* The attorney reviews the complete draft in Gmail, confirms one signature and sends it personally. Do not insert
+  another signature during review.
+* A `--draft-id` update replaces the complete draft. Supply every recipient, the thread and every attachment that must
+  remain; signature handling preserves those supplied headers and attachment bytes.
+* To file a received message into the matter's Communication log, run `navigator mail parse <gmail-web-url>` (the
+  URL copied from the browser), `navigator mail parse <message.eml>`, or `navigator mail parse <document.pdf>` — the
+  last uploads through the document lane. Filing is a record write only; it never sends or archives in Gmail.
 * To keep a Gmail message's .eml copy in this checkout, run `navigator mail save <gmail-web-url>`; it writes
   `mail/YYYY.MM.DD_<subject>.eml` and refuses a filename that drops the send-date prefix.
 
